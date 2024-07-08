@@ -5,31 +5,28 @@ from sklearn.tree import DecisionTreeClassifier
 import plotly.express as px
 
 # Initialize session state variables
-if 'history_diagnosed' not in st.session_state:
-    st.session_state.history_diagnosed = ''
-if 'history_biopsies' not in st.session_state:
-    st.session_state.history_biopsies = ''
-if 'history_family' not in st.session_state:
-    st.session_state.history_family = ''
-if 'symptoms_lumps' not in st.session_state:
-    st.session_state.symptoms_lumps = ''
-if 'symptoms_pain' not in st.session_state:
-    st.session_state.symptoms_pain = ''
-if 'symptoms_discharge' not in st.session_state:
-    st.session_state.symptoms_discharge = ''
-if 'symptoms_size_change' not in st.session_state:
-    st.session_state.symptoms_size_change = ''
-if 'symptoms_skin_change' not in st.session_state:
-    st.session_state.symptoms_skin_change = ''
-if 'screening_mammogram' not in st.session_state:
-    st.session_state.screening_mammogram = ''
-if 'screening_other_tests' not in st.session_state:
-    st.session_state.screening_other_tests = ''
 if 'page' not in st.session_state:
     st.session_state.page = 'Home'
+if 'input_data' not in st.session_state:
+    st.session_state.input_data = {}
 
 def set_page(page):
     st.session_state.page = page
+
+def collect_input_data():
+    input_data = {
+        'history_diagnosed': st.selectbox('Have you ever been diagnosed with breast cancer or any other type of cancer before?', ['', 'No', 'Yes']),
+        'history_biopsies': st.selectbox('Have you had any previous breast biopsies or surgeries?', ['', 'No', 'Yes']),
+        'history_family': st.selectbox('Do you have a family history of breast cancer (e.g., mother, sister, daughter)?', ['', 'No', 'Yes']),
+        'symptoms_lumps': st.selectbox('Have you noticed any lumps or changes in your breast tissue?', ['', 'No', 'Yes']),
+        'symptoms_pain': st.selectbox('Have you experienced any pain or tenderness in your breasts?', ['', 'No', 'Yes']),
+        'symptoms_discharge': st.selectbox('Do you have any nipple discharge or changes in the appearance of your nipples?', ['', 'No', 'Yes']),
+        'symptoms_size_change': st.selectbox('Have you observed any changes in the size, shape, or appearance of your breasts?', ['', 'No', 'Yes']),
+        'symptoms_skin_change': st.selectbox('Have you noticed any skin changes on your breasts, such as dimpling or redness?', ['', 'No', 'Yes']),
+        'screening_mammogram': st.selectbox('Have you had a mammogram before, and if so, when was your last one?', ['', 'No', 'Yes']),
+        'screening_other_tests': st.selectbox('Have you undergone any other breast cancer screening tests, such as MRI or ultrasound?', ['', 'No', 'Yes'])
+    }
+    return input_data
 
 # Train a simple model (for demonstration purposes)
 np.random.seed(42)
@@ -56,9 +53,7 @@ model = DecisionTreeClassifier()
 model.fit(X, y)
 
 # Streamlit app layout
-st.title('Breast Cancer Risk Prediction App; Your First Entry For The First Handy Healthcare')
-
-page = st.session_state.page
+st.title('Breast Cancer Risk Prediction App: Your First Entry To Get First Handy Healthcare')
 
 def show_home():
     st.image("https://homecare-aid.com/wp-content/uploads/2024/04/women-hands-holding-pink-breast-cancer-ribbon-stan-2022-12-16-07-16-23-utc-1-1024x682.jpg", use_column_width=True)
@@ -81,46 +76,23 @@ def show_home():
 
 def show_assessment():
     st.header('Personal and Family Medical History')
-    st.session_state.history_diagnosed = st.selectbox(
-        'Have you ever been diagnosed with breast cancer or any other type of cancer before?', ['', 'No', 'Yes'], key='history_diagnosed')
-    st.session_state.history_biopsies = st.selectbox(
-        'Have you had any previous breast biopsies or surgeries?', ['', 'No', 'Yes'], key='history_biopsies')
-    st.session_state.history_family = st.selectbox(
-        'Do you have a family history of breast cancer (e.g., mother, sister, daughter)?', ['', 'No', 'Yes'], key='history_family')
+    st.session_state.input_data.update(collect_input_data())
     
-    st.header('Symptoms and Physical Changes')
-    st.session_state.symptoms_lumps = st.selectbox(
-        'Have you noticed any lumps or changes in your breast tissue?', ['', 'No', 'Yes'], key='symptoms_lumps')
-    st.session_state.symptoms_pain = st.selectbox(
-        'Have you experienced any pain or tenderness in your breasts?', ['', 'No', 'Yes'], key='symptoms_pain')
-    st.session_state.symptoms_discharge = st.selectbox(
-        'Do you have any nipple discharge or changes in the appearance of your nipples?', ['', 'No', 'Yes'], key='symptoms_discharge')
-    st.session_state.symptoms_size_change = st.selectbox(
-        'Have you observed any changes in the size, shape, or appearance of your breasts?', ['', 'No', 'Yes'], key='symptoms_size_change')
-    st.session_state.symptoms_skin_change = st.selectbox(
-        'Have you noticed any skin changes on your breasts, such as dimpling or redness?', ['', 'No', 'Yes'], key='symptoms_skin_change')
-    
-    st.header('Screening and Preventive Measures')
-    st.session_state.screening_mammogram = st.selectbox(
-        'Have you had a mammogram before, and if so, when was your last one?', ['', 'No', 'Yes'], key='screening_mammogram')
-    st.session_state.screening_other_tests = st.selectbox(
-        'Have you undergone any other breast cancer screening tests, such as MRI or ultrasound?', ['', 'No', 'Yes'], key='screening_other_tests')
-
     if st.button("Submit"):
         set_page('Results')
 
 def show_results():
     input_data = pd.DataFrame({
-        'history_diagnosed': [1 if st.session_state.history_diagnosed == 'Yes' else 0],
-        'history_biopsies': [1 if st.session_state.history_biopsies == 'Yes' else 0],
-        'history_family': [1 if st.session_state.history_family == 'Yes' else 0],
-        'symptoms_lumps': [1 if st.session_state.symptoms_lumps == 'Yes' else 0],
-        'symptoms_pain': [1 if st.session_state.symptoms_pain == 'Yes' else 0],
-        'symptoms_discharge': [1 if st.session_state.symptoms_discharge == 'Yes' else 0],
-        'symptoms_size_change': [1 if st.session_state.symptoms_size_change == 'Yes' else 0],
-        'symptoms_skin_change': [1 if st.session_state.symptoms_skin_change == 'Yes' else 0],
-        'screening_mammogram': [1 if st.session_state.screening_mammogram == 'Yes' else 0],
-        'screening_other_tests': [1 if st.session_state.screening_other_tests == 'Yes' else 0]
+        'history_diagnosed': [1 if st.session_state.input_data['history_diagnosed'] == 'Yes' else 0],
+        'history_biopsies': [1 if st.session_state.input_data['history_biopsies'] == 'Yes' else 0],
+        'history_family': [1 if st.session_state.input_data['history_family'] == 'Yes' else 0],
+        'symptoms_lumps': [1 if st.session_state.input_data['symptoms_lumps'] == 'Yes' else 0],
+        'symptoms_pain': [1 if st.session_state.input_data['symptoms_pain'] == 'Yes' else 0],
+        'symptoms_discharge': [1 if st.session_state.input_data['symptoms_discharge'] == 'Yes' else 0],
+        'symptoms_size_change': [1 if st.session_state.input_data['symptoms_size_change'] == 'Yes' else 0],
+        'symptoms_skin_change': [1 if st.session_state.input_data['symptoms_skin_change'] == 'Yes' else 0],
+        'screening_mammogram': [1 if st.session_state.input_data['screening_mammogram'] == 'Yes' else 0],
+        'screening_other_tests': [1 if st.session_state.input_data['screening_other_tests'] == 'Yes' else 0]
     })
 
     prediction = model.predict(input_data)[0]
@@ -151,11 +123,11 @@ def show_feedback():
         set_page('Home')
 
 # Navigation
-if page == 'Home':
+if st.session_state.page == 'Home':
     show_home()
-elif page == 'Assessment':
+elif st.session_state.page == 'Assessment':
     show_assessment()
-elif page == 'Results':
+elif st.session_state.page == 'Results':
     show_results()
-elif page == 'Feedback':
+elif st.session_state.page == 'Feedback':
     show_feedback()
