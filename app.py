@@ -23,7 +23,7 @@ def collect_input_data():
         'symptoms_discharge': st.selectbox('Do you have any nipple discharge or changes in the appearance of your nipples?', ['', 'No', 'Yes']),
         'symptoms_size_change': st.selectbox('Have you observed any changes in the size, shape, or appearance of your breasts?', ['', 'No', 'Yes']),
         'symptoms_skin_change': st.selectbox('Have you noticed any skin changes on your breasts, such as dimpling or redness?', ['', 'No', 'Yes']),
-        'screening_mammogram': st.selectbox('Have you had a mammogram before, and if so, when was your last one?', ['', 'No', 'Yes']),
+        'screening_mammogram': st.selectbox('Have you had a mammogram before?', ['', 'No', 'Yes']),
         'screening_other_tests': st.selectbox('Have you undergone any other breast cancer screening tests, such as MRI or ultrasound?', ['', 'No', 'Yes'])
     }
     return input_data
@@ -103,7 +103,7 @@ def show_results():
         st.success("Your responses indicate a lower risk of breast cancer. Keep up with regular screenings and preventive measures.")
 
     st.write("### Personalized Suggestions")
-    suggestions = ["Maintain a healthy diet", "Exercise regularly", "Avoid smoking", "Limit alcohol intake"]
+    suggestions = ["Maintain a healthy diet, avoid fatty food specifically junk foods", "Exercise regularly", "Avoid smoking", "Limit alcohol intake"]
     for suggestion in suggestions:
         st.write(f"- {suggestion}")
 
